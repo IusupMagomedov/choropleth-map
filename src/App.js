@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import './App.css';
 import * as d3 from "d3"
+import * as topojson from "topojson-client"
 
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
   const [mapData, setMapData] = useState({})
   const w = 960
   const h = 600
+
 
   useEffect(() => {
     fetch("https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json")
@@ -29,20 +31,42 @@ function App() {
 
   useEffect(() => {
     if(eduData.length > 0 && mapData.type) { //
-      // console.log("Just fetched US Education Data: ", eduData)
+      console.log("Just fetched US Education Data: ", eduData)
       // console.log("Just fetched US County Data: ", mapData)  
+
+
+      const mapTopoData = topojson.feature(mapData, mapData.objects.counties).features
+      // console.log("Map data after topojson: ", mapTopoData)
+
+      const createSplicedArray = (arr1, arr2) => {
+        const newArr = []
+        for (let i = 0; i < arr1.length; i++) {
+          newArr.push({
+            "id": arr1[i].id,
+            "geometry": arr1[i].geometry, 
+            area_name: arr2[i].area_name,
+            bachelorsOrHigher: arr2[i].bachelorsOrHigher,
+            fips: arr2[i].fips,
+            state: arr2[i].state
+          })
+        }
+        return newArr
+      }
+      const splicedData = createSplicedArray(mapTopoData, eduData)
+      console.log("Spliced data after creation: ", splicedData)
+
 
       const svg = d3.select(svgRef.current)
 
       svg.attr("width", w)
         .attr("height", h)
 
-      svg.append("rect")
-        .attr("x", 10)
-        .attr("y", 10)
-        .attr("width", 100)
-        .attr("height", 100)
-        .attr("fill", "green")
+      // svg.append("rect")
+      //   .attr("x", 10)
+      //   .attr("y", 10)
+      //   .attr("width", 100)
+      //   .attr("height", 100)
+      //   .attr("fill", "green")
     }
 
 
@@ -54,7 +78,9 @@ function App() {
 
   return (
     <div className="App">
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef}>
+      </svg>
+
     </div>
   );
 }
