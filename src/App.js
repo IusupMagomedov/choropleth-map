@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     if(eduData.length > 0 && mapData.type) { //
-      console.log("Just fetched US Education Data: ", eduData)
+      // console.log("Just fetched US Education Data: ", eduData)
       // console.log("Just fetched US County Data: ", mapData)  
 
 
@@ -53,20 +53,29 @@ function App() {
         return newArr
       }
       const splicedData = createSplicedArray(mapTopoData, eduData)
-      console.log("Spliced data after creation: ", splicedData)
+      // console.log("Spliced data right after creation: ", splicedData)
 
 
       const svg = d3.select(svgRef.current)
 
       svg.attr("width", w)
         .attr("height", h)
+        .selectAll("path")
+        .data(splicedData)
+        .enter()
+        .append("path")
+        .attr("p", d => {
+          console.log("Coordinates in d: ", d.geometry.coordinates)
 
-      // svg.append("rect")
-      //   .attr("x", 10)
-      //   .attr("y", 10)
-      //   .attr("width", 100)
-      //   .attr("height", 100)
-      //   .attr("fill", "green")
+          const arrayOfcoordinates = d.geometry
+            .coordinates
+            .map((coordinate, index) =>  coordinate[0])//(index === 0 ? "M" : "L") +
+            console.log("Array of coordinates: ", arrayOfcoordinates)
+
+          // return arrayOfcoordinates.join("")
+        })
+        .attr("stroke", "black")
+        .attr("fill", "green")
     }
 
 
