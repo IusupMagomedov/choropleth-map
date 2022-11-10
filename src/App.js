@@ -64,15 +64,15 @@ function App() {
         .data(splicedData)
         .enter()
         .append("path")
-        .attr("p", d => {
-          console.log("Coordinates in d: ", d.geometry.coordinates)
+        .attr("d", d => {
+          //console.log("Coordinates in d: ", d.geometry.coordinates[0])
 
           const arrayOfcoordinates = d.geometry
-            .coordinates
-            .map((coordinate, index) =>  coordinate[0])//(index === 0 ? "M" : "L") +
-            console.log("Array of coordinates: ", arrayOfcoordinates)
+            .coordinates[0]
+            .map((coordinate, index) =>  `${index === 0 ? "M" : "L"}${coordinate[0]},${coordinate[1]}`)//
+          console.log("Array of coordinates: ", arrayOfcoordinates)
 
-          // return arrayOfcoordinates.join("")
+          return arrayOfcoordinates.join("")
         })
         .attr("stroke", "black")
         .attr("fill", "green")
