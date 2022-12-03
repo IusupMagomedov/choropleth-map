@@ -11,7 +11,7 @@ function App() {
   const svgRef = useRef(null)
   const [eduData, setEduData] = useState([])
   const [mapData, setMapData] = useState({})
-  const w = 960
+  const w = 1000
   const h = 600
 
 
@@ -41,7 +41,25 @@ function App() {
     
     if(eduData.length) { //
       console.log("US Education Data and passed to main useEffect method: ", eduData)
-      console.log("US County Data and passed to main useEffect method: ", mapData)
+      // console.log("US County Data and passed to main useEffect method: ", mapData)
+
+      const svg = d3.select(svgRef.current)
+        .attr('width', w)
+        .attr('height', h)
+        .selectAll('path')
+        .data(mapData)
+        .enter()
+        .append('path')
+        .attr('d', d3.geoPath())
+        .attr('class', 'county')
+        .attr('fill', mapDataElement => {
+          const id = mapDataElement['id']
+          const county = eduData.find(eduElement => eduElement.fips === id)
+          return "red"
+        })
+
+
+
 
       // const createSplicedArray = (arr1, arr2) => {
       //   const newArr = []
@@ -61,7 +79,6 @@ function App() {
       // // console.log("Spliced data right after creation: ", splicedData)
 
 
-      // const svg = d3.select(svgRef.current)
 
       // svg.attr("width", w)
       //   .attr("height", h)
