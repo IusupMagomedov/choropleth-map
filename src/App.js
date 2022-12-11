@@ -16,18 +16,19 @@ function App() {
 
 
   useEffect(() => {
-    d3.json(countyURL)
-      .then((data, error) => {
+    // Fetching data
+    d3.json(countyURL) //This function fetches data
+      .then((data, error) => { // If there was an error let's log it
         if(error) {
           console.log("Error while fetching map data: ", error)
-        } else {
+        } else { // Otherwise we save data to state
           //console.log("Just fetched map data: ", data)
           setMapData(topojson.feature(data, data.objects.counties).features)
-          d3.json(educationURL)
+          d3.json(educationURL) // After saving map data we can fetch eucation data
             .then((data, error) => {
-              if(error) {
+              if(error) {// If there was an error let's log it
                 console.log("Error while fetching education data: ", error)
-              } else {
+              } else {// Otherwise we save data to the state
                 // console.log("Just fetched education data: ", data)
                 setEduData(data)
               }
@@ -40,23 +41,42 @@ function App() {
   useEffect(() => {
     
     if(eduData.length) { //
-      console.log("US Education Data and passed to main useEffect method: ", eduData)
+      // console.log("US Education Data and passed to main useEffect method: ", eduData)
       // console.log("US County Data and passed to main useEffect method: ", mapData)
 
-      const svg = d3.select(svgRef.current)
+      //create min and max edu values for legend barchart
+      const minEduValue = d3.min(eduData, d => d.bachelorsOrHigher)
+      const maxEduValue = d3.max(eduData, d => d.bachelorsOrHigher)
+      // console.log("Min educational data: ", minEduValue)      
+      // console.log("Max educational data: ", maxEduValue)
+
+
+
+      const svg = d3.select(svgRef.current) // Connecting an svg and assign width and height
         .attr('width', w)
         .attr('height', h)
-        .selectAll('path')
+
+      // only for bars 
+      const zScale = d3.scaleSequential()
+        .domain([minEduValue, maxEduValue])
+        .interpolator(d3.interpolateYlGn);
+
+      const getCounty = (mapElement, countyArray) => {
+        const id = mapElement.id
+        const county = countyArray.find(eduElement => eduElement.fips === id)
+        // console.log("Entrance with a specific id: ", county)
+        return county
+      }
+
+      svg.selectAll('path') // Create a map
         .data(mapData)
         .enter()
         .append('path')
         .attr('d', d3.geoPath())
         .attr('class', 'county')
-        .attr('fill', mapDataElement => {
-          const id = mapDataElement['id']
-          const county = eduData.find(eduElement => eduElement.fips === id)
-          return "red"
-        })
+        .attr("data-fips", mapDataElement => getCounty(mapDataElement, eduData).fips)
+        .attr("data-education", mapDataElement => getCounty(mapDataElement, eduData).bachelorsOrHigher)
+        .attr('fill', mapDataElement => zScale(getCounty(mapDataElement, eduData).bachelorsOrHigher))
 
 
 
