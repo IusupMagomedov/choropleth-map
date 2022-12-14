@@ -9,10 +9,14 @@ function App() {
   const countyURL = "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json"
   const educationURL = "https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json"
   const svgRef = useRef(null)
+  const toolTipRef = useRef(null)
   const [eduData, setEduData] = useState([])
   const [mapData, setMapData] = useState({})
   const w = 1000
-  const h = 600
+  const h = 700
+  const padding = 60
+  const legendGradeCount = 15
+  const legendRectEdge = 25
 
 
   useEffect(() => {
@@ -56,7 +60,9 @@ function App() {
         .attr('width', w)
         .attr('height', h)
 
-      // only for bars 
+      const tooltip = d3.select(toolTipRef.current) // Connecting an toolTip
+
+      // Scale for colors
       const zScale = d3.scaleSequential()
         .domain([minEduValue, maxEduValue])
         .interpolator(d3.interpolateYlGn);
@@ -77,49 +83,70 @@ function App() {
         .attr("data-fips", mapDataElement => getCounty(mapDataElement, eduData).fips)
         .attr("data-education", mapDataElement => getCounty(mapDataElement, eduData).bachelorsOrHigher)
         .attr('fill', mapDataElement => zScale(getCounty(mapDataElement, eduData).bachelorsOrHigher))
+        .attr('stroke', '1px')
+        .attr('stroke-color', 'green')
+        .on('mouseover', (event, mapDataElement) => {
+          // console.log("Map element in mouse over code piece: ", mapDataElement)
+          // console.log("Edu data in mouse over code piece: ", eduData)
+          console.log("Mouse event: ", event)
+          const county = getCounty(mapDataElement, eduData)
+          console.log("Entrance with a specific id: ", county)
+          tooltip.transition()
+            .style('visibility', 'visible')
+            .style('position',"absolute")
+            .style('top', `${event.y + 5}px`)
+            .style('left', `${event.x + 20}px`)
+            .text(`${county.area_name}, ${county.state}, ${county.bachelorsOrHigher}%`)           
+        })
+        .on('mouseout', event => tooltip.transition().style('visibility', 'hidden'))
 
 
+      // ------------- make a legend ---------------------------------------------------
 
+      const legend = svg.append('g')
+        .attr("id", "legend")
+        .attr("transform", `translate(${padding + 50}, ${h - padding})`)
+        
+      const legendArrayGeneration = (min, max, count) => {
+          const array = []
+          for (let i = min; i <= max; i = (i + (max - min) / count)) {
+            array.push(i)
+          }
+          return(array)
+        }
+        // making an array from min to max with conut items
+        const legendArray = legendArrayGeneration(minEduValue, maxEduValue, legendGradeCount)
+  
+        //console.log("Initial legendArray looks like: ", legendArray)
+  
+  
+        
+        // drawing legend rects
+        legend.selectAll("rect")
+          .data(legendArray)
+          .enter()
+          .append("rect")
+          .attr("x", (d, i) => i * legendRectEdge)
+          .attr("y", 0)
+          .attr("width", legendRectEdge)
+          .attr("height", legendRectEdge)
+          .attr("fill", d => zScale(d))
+          .attr("stroke", "black")
+          .attr("stroke-width", 1)
+        
+        // only for legend
+        const zScaleLegend = d3.scaleBand()
+          .domain(legendArray)
+          .range([0, (legendGradeCount + 1) * legendRectEdge])
+  
+        
+        const zAxis = d3.axisBottom(zScaleLegend)
+          .tickFormat(x => `${x.toFixed(0)}%`)
+  
+        legend.append("g")
+          .call(zAxis)
+          .attr("transform", `translate(0, ${legendRectEdge})`)
 
-      // const createSplicedArray = (arr1, arr2) => {
-      //   const newArr = []
-      //   for (let i = 0; i < arr1.length; i++) {
-      //     newArr.push({
-      //       "id": arr1[i].id,
-      //       "geometry": arr1[i].geometry, 
-      //       area_name: arr2[i].area_name,
-      //       bachelorsOrHigher: arr2[i].bachelorsOrHigher,
-      //       fips: arr2[i].fips,
-      //       state: arr2[i].state
-      //     })
-      //   }
-      //   return newArr
-      // }
-      // const splicedData = createSplicedArray(mapTopoData, eduData)
-      // // console.log("Spliced data right after creation: ", splicedData)
-
-
-
-      // svg.attr("width", w)
-      //   .attr("height", h)
-      //   .selectAll("path")
-      //   .data(splicedData)
-      //   .enter()
-      //   .append("path")
-      //   .attr("d", d => {
-      //     //console.log("Coordinates in d: ", d.geometry.coordinates[0])
-
-      //     const arrayOfcoordinates = d.geometry
-      //       .coordinates[0]
-      //       .map((coordinate, index) =>  `${index === 0 ? "M" : "L"}${coordinate[0]},${coordinate[1]}`)//
-      //     console.log("Array of coordinates: ", arrayOfcoordinates)
-
-      //     return arrayOfcoordinates.join("")
-      //   })
-      //   .attr("stroke", "black")
-      //   .attr("fill", "green")
-      //   .attr("data-fips", d =>d.fips)
-      //   .attr("class", "county")
     }
 
 
@@ -134,7 +161,10 @@ function App() {
       <h1 id="title">United States Educational Attainment</h1>
       <h4 id="description">Percentage of adults age 25 and older with a bachelor's degree or higher (2010-2014)</h4>
       <svg ref={svgRef}>
+        
       </svg>
+      <div id="tooltip" ref={toolTipRef}>
+      </div>
 
     </div>
   );
