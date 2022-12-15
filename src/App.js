@@ -67,6 +67,7 @@ function App() {
         .domain([minEduValue, maxEduValue])
         .interpolator(d3.interpolateYlGn);
 
+      // Get the connection between map data element and edu data, we need it for several funtions below
       const getCounty = (mapElement, countyArray) => {
         const id = mapElement.id
         const county = countyArray.find(eduElement => eduElement.fips === id)
@@ -78,10 +79,12 @@ function App() {
         .data(mapData)
         .enter()
         .append('path')
-        .attr('d', d3.geoPath())
+        .attr('d', d3.geoPath()) // Convert geo to svg format
         .attr('class', 'county')
+        // Get edu element according to map data element
         .attr("data-fips", mapDataElement => getCounty(mapDataElement, eduData).fips)
         .attr("data-education", mapDataElement => getCounty(mapDataElement, eduData).bachelorsOrHigher)
+        // Make some colors
         .attr('fill', mapDataElement => zScale(getCounty(mapDataElement, eduData).bachelorsOrHigher))
         .attr('stroke-width', '1px')
         .attr('stroke', 'green')
@@ -89,21 +92,24 @@ function App() {
           // console.log("Map element in mouse over call back function: ", mapDataElement)
           // console.log("Edu data in mouse over call back function: ", eduData)
           // console.log("Mouse event in mouse over call back function: ", event)
-          const county = getCounty(mapDataElement, eduData)
           // console.log("Entrance with a specific id: ", county)
-          const target = d3.select(event.target)
-          target.transition()
-            .attr('stroke-width', '2px')
+
+          // ----- Some hover over effects ----------------------
+          const target = d3.select(event.target) 
+          target.attr('stroke-width', '2px')
             .attr('stroke', 'black')
-          tooltip.transition()
+
+          // ----- Modify tooltip according our county
+          const county = getCounty(mapDataElement, eduData) // We need county for tool tip
+          tooltip.transition() // transition method for changing style
             .style('visibility', 'visible')
-            .style('position',"absolute")
+            .style('position', 'absolute')
             .style('top', `${event.y + 5}px`)
             .style('left', `${event.x + 20}px`)
             .attr('data-education', county.bachelorsOrHigher)
-            .text(`${county.area_name}, ${county.state}, ${county.bachelorsOrHigher}%`)           
+            .text(`${county.area_name}, ${county.state}, ${county.bachelorsOrHigher}%`)        
         })
-        .on('mouseout', event => {
+        .on('mouseout', event => { // We need to change modifications after mouse went out
           tooltip.transition().style('visibility', 'hidden')
           const target = d3.select(event.target)
           target.transition()
