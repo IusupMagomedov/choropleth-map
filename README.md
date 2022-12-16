@@ -1,70 +1,44 @@
-# Getting Started with Create React App
+# Visualize Data with a Choropleth Map
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## This if FCC certification project
 
-## Available Scripts
+### Ready project is here: 
+https://iusupmagomedov.github.io/choropleth-map/
 
-In the project directory, you can run:
 
-### `npm start`
+### The task is:
+Objective: Build an app that is functionally similar to this: https://choropleth-map.freecodecamp.rocks.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Fulfill the below user stories and get all of the tests to pass. Use whichever libraries or APIs you need. Give it your own personal style.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+You can use HTML, JavaScript, CSS, and the D3 svg-based visualization library. Required (non-virtual) DOM elements are queried on the moment of each test. If you use a frontend framework (like Vue for example), the test results may be inaccurate for dynamic content. We hope to accommodate them eventually, but these frameworks are not currently supported for D3 projects.
 
-### `npm test`
+User Story #1: My choropleth should have a title with a corresponding id="title".
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+User Story #2: My choropleth should have a description element with a corresponding id="description".
 
-### `npm run build`
+User Story #3: My choropleth should have counties with a corresponding class="county" that represent the data.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+User Story #4: There should be at least 4 different fill colors used for the counties.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+User Story #5: My counties should each have data-fips and data-education properties containing their corresponding fips and education values.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+User Story #6: My choropleth should have a county for each provided data point.
 
-### `npm run eject`
+User Story #7: The counties should have data-fips and data-education values that match the sample data.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+User Story #8: My choropleth should have a legend with a corresponding id="legend".
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+User Story #9: There should be at least 4 different fill colors used for the legend.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+User Story #10: I can mouse over an area and see a tooltip with a corresponding id="tooltip" which displays more information about the area.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+User Story #11: My tooltip should have a data-education property that corresponds to the data-education of the active area.
 
-## Learn More
+Here are the datasets you will need to complete this project:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+US Education Data:https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/for_user_education.json
+US County Data:https://cdn.freecodecamp.org/testable-projects-fcc/data/choropleth_map/counties.json
+You can build your project by using this CodePen template and clicking Save to create your own pen. Or you can use this CDN link to run the tests in any environment you like: https://cdn.freecodecamp.org/testable-projects-fcc/v1/bundle.js
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Once you're done, submit the URL to your working project with all its tests passing.
